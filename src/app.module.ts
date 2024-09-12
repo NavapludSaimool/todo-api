@@ -4,26 +4,25 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TodoModule } from './todo/todo.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { typeOrmConfig } from './config/typeorm.config';
 
 @Module({
   imports: [
     TodoModule, 
     ConfigModule.forRoot({
-      isGlobal: true, // Makes ConfigModule available globally
+      isGlobal: true, 
     }), 
     TypeOrmModule.forRoot({
-    type: 'postgres',
+    type: process.env.DATABASE_TYPE as any,
     host: process.env.DATABASE_HOST,
-    port: 5432,
-    username: 'tododata_owner',
-    password: '5xvJPE8huslV',
-    database: 'tododata',
+    port: process.env.DATABASE_PORT as unknown as number,
+    username: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+    database: process.env.DATABASE_DATA,
     entities: [
         __dirname + '/../**/*.entity{.ts,.js}',
     ],
     ssl: {
-        rejectUnauthorized: false,  // if you don't have a trusted certificate
+        rejectUnauthorized: false,  
       },
     synchronize: true,
   }),
