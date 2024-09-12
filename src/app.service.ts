@@ -15,4 +15,8 @@ export class AppService {
   getHello(): string {
     return 'Hello World!';
   }
+
+  getSomething(): string{
+    return 'Something has returned'
+  }
 }
