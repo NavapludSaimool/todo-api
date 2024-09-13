@@ -2,39 +2,39 @@ import { Injectable } from '@nestjs/common';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { Todo } from './todo.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class TodoService {
   private todos: Todo[] = [];
   private idCounter = 1;
 
+  constructor(
+    @InjectRepository(Todo)
+    private todoRepository: Repository<Todo>,
+  ) {}
 
-  create(todoDto: CreateTodoDto): Todo {
-    const todo: Todo = {
-      id: this.idCounter++,
-      ...todoDto,
-    };
-    this.todos.push(todo);
-    return todo;
+
+  async create(todoDto: CreateTodoDto): Promise<Todo> {
+    const todo = this.todoRepository.create(todoDto);
+    return await this.todoRepository.save(todo);
   }
 
-  findAll() {
-    return this.todos;
+  async findAll(): Promise<Todo[]> {
+    return await this.todoRepository.find()
   }
 
-  findOne(id: number) {
-    return this.todos.find(todo => todo.id === id);
+  async findOne(id: number): Promise<Todo> {
+    return await this.todoRepository.findOne({ where: { id } });
   }
 
-  update(id: number, updateTodoDto: UpdateTodoDto): Todo {
-    const todo = this.findOne(id);
-    if (todo) {
-      Object.assign(todo, updateTodoDto);
-    }
-    return todo;
+  async update(id: number, updateTodoDto: UpdateTodoDto): Promise<Todo> {
+    await this.todoRepository.update(id, updateTodoDto);
+    return this.findOne(id)
   }
 
-  remove(id: number): void {
-    this.todos = this.todos.filter(todo => todo.id !== id);
+  async remove(id: number): Promise<void> {
+    await this.todoRepository.delete(id);
   }
 }

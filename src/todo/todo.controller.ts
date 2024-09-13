@@ -10,34 +10,29 @@ import { ApiTags } from '@nestjs/swagger';
 export class TodoController {
   constructor(private readonly todoService: TodoService) {}
 
-  // @Get('/')
-  // getAlltask(){
-  //   return [1,2,3];
-  // }
-
   @Post()
   @UsePipes(ValidationPipe)
-  create(@Body() createTodoDto: CreateTodoDto): Todo {
-    return this.todoService.create(createTodoDto);
+  async create(@Body() createTodoDto: CreateTodoDto): Promise<Todo> {
+    return this.todoService.create(createTodoDto)
   }
 
   @Get()
-  findAll(): Todo[] {
+  async findAll(): Promise<Todo[]> {
     return this.todoService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Todo {
+  async findOne(@Param('id') id: string): Promise<Todo> {
     return this.todoService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTodoDto: UpdateTodoDto): Todo {
+  async update(@Param('id') id: string, @Body() updateTodoDto: UpdateTodoDto): Promise<Todo> {
     return this.todoService.update(+id, updateTodoDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): void {
+  async remove(@Param('id') id: string): Promise<void> {
     return this.todoService.remove(+id);
   }
 }
